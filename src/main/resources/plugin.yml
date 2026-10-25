@@ -1,0 +1,17 @@
+name: EZdebugPlus
+version: '${project.version}'
+main: com.github.blade.ezdebug.EzDebugPlugin
+api-version: '1.21'
+author: bladestech
+description: "EZdebug+: a Debug Potion that shows EZvac's devices at work. An addon for EZvac."
+depend: [EZvac]
+commands:
+  ezdb:
+    description: EZdebug+ commands.
+    usage: /ezdb <debug|off> [player] | /ezdb reload
+    permission: ezdebug.use
+    aliases: [ezdebug]
+permissions:
+  ezdebug.use:
+    description: Allows /ezdb debug, off and reload.
+    default: op
