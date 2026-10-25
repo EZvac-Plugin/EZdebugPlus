@@ -1,0 +1,23 @@
+# Changelog
+
+All notable changes to EZdebug+ are recorded here.
+
+## 0.1.0
+
+The first release: the Debug Potion. Needs EZvac with API 1.2 or newer.
+
+### Added
+
+- **`/ezdb debug [player]`** gives a Debug Potion (`ezdebug.use`, ops).
+- **Drinking it** gives 8 minutes of debug vision, seen only by that player:
+  - glowing outlines on every EZvac sign, coloured by kind, visible through
+    walls;
+  - glowing outlines on all equipment: grey stopped, cyan cooling, orange
+    heating;
+  - small clouds on the vents of systems that are cooling or heating, and on
+    running equipment.
+- **Ending it:** milk, death, the timer, or `/ezdb off`. The remaining time
+  carries over a relog. Night Vision shows the countdown (`effect:` in
+  config.yml).
+- **config.yml:** the duration, radius, refresh rate, countdown effect and
+  every colour.
