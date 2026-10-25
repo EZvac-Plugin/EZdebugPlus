@@ -31,10 +31,9 @@ and so does dying.
 | Dehumidifier and humidifier signs | blue |
 | Equipment | grey when stopped, cyan cooling, orange heating |
 
-Clouds are cyan for cooling and orange for heating. (Signs get a frame
-rather than a glow: Minecraft draws sign boards in a way a glowing copy
-can't trace.) Every colour can be
-changed in config.yml.
+Clouds are cyan for cooling and orange for heating. Every colour can be
+changed in config.yml. Signs get a frame rather than a glow: Minecraft draws
+sign boards in a way a glowing copy can't trace.
 
 ## Commands and permissions
 
@@ -63,7 +62,8 @@ EZdebug+ is built only on EZvac's public API: `devices(world)` lists every
 device with its position, the equipment and thermostat views say what's
 running, and the device events keep the outlines in step. Equipment outlines
 are block displays that only debug players are shown; they're never saved
-with the world. Frames and clouds are particles sent to debug players only. See [EZvac's API guide](https://github.com/EZvac-Plugin/EZvac/blob/main/docs/api.md).
+with the world. Frames and clouds are particles sent to debug players only.
+See [EZvac's API guide](https://github.com/EZvac-Plugin/EZvac/blob/main/docs/api.md).
 
 ## Building
 
