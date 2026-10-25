@@ -11,7 +11,7 @@ import java.util.OptionalInt;
 
 /**
  * The colours debug vision draws in, as 0xRRGGBB. Every EZvac sign is
- * outlined in its kind's colour; equipment is outlined by what it is doing;
+ * framed in its kind's colour; equipment is outlined by what it is doing;
  * clouds show cooling or heating. Pure.
  */
 public record Palette(int thermostat, int thermometer, int rpmMonitor, int settingsPanel, int sensorHub,
@@ -20,8 +20,8 @@ public record Palette(int thermostat, int thermometer, int rpmMonitor, int setti
         return new Palette(0x55FFFF, 0xFFFFFF, 0xFFFF55, 0xFF77FF, 0x55FF55, 0x5599FF, 0x8A8A8A, 0x55DDFF, 0xFF9933);
     }
 
-    /** The outline colour for a device, or empty for devices that aren't outlined (vents, sensor buttons). */
-    public OptionalInt outline(HvacDevice device) {
+    /** A device's colour: its sign's frame, or equipment's outline; empty for vents and sensor buttons. */
+    public OptionalInt color(HvacDevice device) {
         return switch (device) {
             case ThermostatView ignored -> OptionalInt.of(thermostat);
             case EquipmentView equipment -> OptionalInt.of(equipment.running() ? activity(equipment.mode()) : stopped);

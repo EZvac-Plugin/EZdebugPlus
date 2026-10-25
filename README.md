@@ -4,11 +4,11 @@
 the realistic HVAC and indoor-climate plugin for Paper and Purpur.
 
 `/ezdb debug` gives you a **Debug Potion**. Drink it, and for 8 minutes:
-- **every EZvac sign glows** with an outline, in a colour for its kind. You
-  can see them through walls, so a thermostat behind a painting or a monitor
-  in a plant room is easy to find;
-- **every piece of equipment glows** too: grey while it's stopped, cyan
-  while it cools, orange while it heats;
+- **every EZvac sign gets a coloured frame:** a ring of specks around its
+  board, in a colour for its kind;
+- **every piece of equipment glows** with an outline you can see through
+  walls, so equipment hidden in a casing is easy to find: grey while it's
+  stopped, cyan while it cools, orange while it heats;
 - **working vents puff a little cloud,** cyan or orange, while their system
   cools or heats, and so does running equipment.
 
@@ -21,7 +21,7 @@ and so does dying.
 
 ## Colours
 
-| Outline | Colour |
+| Device | Colour |
 | --- | --- |
 | Thermostats | aqua |
 | Thermometers, hygrometers, thermo-hygrometers | white |
@@ -31,7 +31,9 @@ and so does dying.
 | Dehumidifier and humidifier signs | blue |
 | Equipment | grey when stopped, cyan cooling, orange heating |
 
-Clouds are cyan for cooling and orange for heating. Every colour can be
+Clouds are cyan for cooling and orange for heating. (Signs get a frame
+rather than a glow: Minecraft draws sign boards in a way a glowing copy
+can't trace.) Every colour can be
 changed in config.yml.
 
 ## Commands and permissions
@@ -59,9 +61,9 @@ A bad value warns in the console and that part uses its defaults.
 
 EZdebug+ is built only on EZvac's public API: `devices(world)` lists every
 device with its position, the equipment and thermostat views say what's
-running, and the device events keep the outlines in step. Outlines are block
-displays that only debug players are shown; they're never saved with the
-world. See [EZvac's API guide](https://github.com/EZvac-Plugin/EZvac/blob/main/docs/api.md).
+running, and the device events keep the outlines in step. Equipment outlines
+are block displays that only debug players are shown; they're never saved
+with the world. Frames and clouds are particles sent to debug players only. See [EZvac's API guide](https://github.com/EZvac-Plugin/EZvac/blob/main/docs/api.md).
 
 ## Building
 
