@@ -4,7 +4,7 @@ All notable changes to EZdebug+ are recorded here.
 
 ## 0.1.0
 
-The first release: the Debug Potion. Needs EZvac with API 1.2 or newer.
+The first release: the Debug Potion. Needs EZvac ALPHA 2.2 or newer (API 1.2).
 
 ### Added
 

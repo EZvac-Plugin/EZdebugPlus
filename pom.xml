@@ -22,8 +22,8 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Needs EZvac API 1.2. Set to the EZvac release tag that ships it. -->
-        <ezvac.api.version>api-1.2-local</ezvac.api.version>
+        <!-- EZvac API 1.2, first in EZvac ALPHA 2.2. -->
+        <ezvac.api.version>ALPHA-2.2</ezvac.api.version>
     </properties>
 
     <repositories>

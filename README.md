@@ -16,8 +16,8 @@ Only you see any of it: other players see nothing. Night Vision shows the
 countdown and helps in dark plant rooms. **Milk** ends it, like any potion,
 and so does dying.
 
-> **Requires** EZvac with API 1.2 or newer, on Paper or Purpur 1.21.1 with
-> Java 21.
+> **Requires** EZvac ALPHA 2.2 or newer (EZvac API 1.2), on Paper or Purpur
+> 1.21.1 with Java 21.
 
 ## Colours
 
