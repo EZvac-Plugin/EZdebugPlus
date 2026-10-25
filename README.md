@@ -1,4 +1,5 @@
 # EZdebug+
+<img width="2560" height="2560" alt="EZDB" src="https://github.com/user-attachments/assets/fbb01ccb-a442-4cb4-afaf-bdb9b2eb9b3b" />
 
 **See EZvac at work.** An addon for [EZvac](https://github.com/EZvac-Plugin/EZvac),
 the realistic HVAC and indoor-climate plugin for Paper and Purpur.
