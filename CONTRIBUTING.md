@@ -22,6 +22,7 @@ Every push and pull request is built and tested by GitHub Actions.
 - **The code only touches EZvac through its public API** (`ezvac-api`, from JitPack). Never reach into EZvac's internals: that is what keeps EZdebug+ working across EZvac releases.
 - **The pure, unit-tested logic is in `model/`:**
   - `Palette` picks the colour for a device and what it's doing;
+  - `SignFrame` places the specks around a sign's board;
   - `Activity` says which vents and equipment are at work;
   - `DebugSettings` reads and checks config.yml.
 
@@ -29,5 +30,5 @@ Every push and pull request is built and tested by GitHub Actions.
 - **The Bukkit side:**
   - `DebugPotion`: the item, drinking it, milk, death, relogs, and EZvac's device events;
   - `DebugVision`: who has debug vision and the redraw task;
-  - `Outlines`: the glowing block displays, shown only to debug players;
+  - `Outlines`: equipment's glowing block displays, shown only to debug players;
   - `Commands`.

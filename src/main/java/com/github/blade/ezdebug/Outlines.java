@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Glowing outlines around devices, seen only by players with debug vision.
- * Each is a block display: a copy of the device's own block, a hair larger,
- * glowing in the device's colour. Hidden from everyone by default and shown
+ * Glowing outlines around equipment, seen only by players with debug vision.
+ * Each is a block display: a copy of the dispenser, a hair larger, glowing in
+ * the colour of what it's doing. (Signs can't glow: see SignFrame.) Hidden from everyone by default and shown
  * to each debug player who should see it. Never saved with the world.
  * Main thread only.
  */
@@ -91,7 +91,7 @@ final class Outlines {
         }
     }
 
-    /** A copy of the block at this spot, glowing; null when its world or chunk isn't loaded. */
+    /** A copy of the block at this spot, a hair larger, glowing; null when its world or chunk isn't loaded. */
     private BlockDisplay spawn(Position at, int color) {
         World world = plugin.getServer().getWorld(at.world());
         if (world == null || !world.isChunkLoaded(at.x() >> 4, at.z() >> 4)) return null;

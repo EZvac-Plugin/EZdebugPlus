@@ -42,24 +42,24 @@ class DebugModelTest {
 
     @Test
     void everySignHasItsKindsColourAndButtonsAndVentsHaveNone() {
-        assertEquals(OptionalInt.of(palette.thermostat()), palette.outline(thermostat("house", ThermostatView.Mode.IDLE, true)));
-        assertEquals(OptionalInt.of(palette.thermometer()), palette.outline(instrument(InstrumentView.Kind.HYGROMETER)));
-        assertEquals(OptionalInt.of(palette.rpmMonitor()), palette.outline(instrument(InstrumentView.Kind.RPM_MONITOR)));
-        assertEquals(OptionalInt.of(palette.settingsPanel()), palette.outline(instrument(InstrumentView.Kind.SETTINGS_PANEL)));
-        assertEquals(OptionalInt.of(palette.sensorHub()), palette.outline(instrument(InstrumentView.Kind.SENSOR_HUB)));
-        assertEquals(OptionalInt.of(palette.climateUnit()), palette.outline(new ClimateUnitView("dry",
+        assertEquals(OptionalInt.of(palette.thermostat()), palette.color(thermostat("house", ThermostatView.Mode.IDLE, true)));
+        assertEquals(OptionalInt.of(palette.thermometer()), palette.color(instrument(InstrumentView.Kind.HYGROMETER)));
+        assertEquals(OptionalInt.of(palette.rpmMonitor()), palette.color(instrument(InstrumentView.Kind.RPM_MONITOR)));
+        assertEquals(OptionalInt.of(palette.settingsPanel()), palette.color(instrument(InstrumentView.Kind.SETTINGS_PANEL)));
+        assertEquals(OptionalInt.of(palette.sensorHub()), palette.color(instrument(InstrumentView.Kind.SENSOR_HUB)));
+        assertEquals(OptionalInt.of(palette.climateUnit()), palette.color(new ClimateUnitView("dry",
                 ClimateUnitView.Kind.DEHUMIDIFIER, AT, 50, 40, true, ClimateUnitView.State.IDLE, 0)));
         for (InstrumentView.Kind kind : InstrumentView.Kind.values())
-            if (kind.sensor()) assertEquals(OptionalInt.empty(), palette.outline(instrument(kind)), kind + " is a button");
-        assertEquals(OptionalInt.empty(), palette.outline(new VentView("house", AT, VentView.Medium.AIR)));
+            if (kind.sensor()) assertEquals(OptionalInt.empty(), palette.color(instrument(kind)), kind + " is a button");
+        assertEquals(OptionalInt.empty(), palette.color(new VentView("house", AT, VentView.Medium.AIR)));
     }
 
     @Test
     void equipmentIsColouredByWhatItDoes() {
-        assertEquals(OptionalInt.of(palette.stopped()), palette.outline(equipment(false, ThermostatView.Mode.IDLE)));
-        assertEquals(OptionalInt.of(palette.heating()), palette.outline(equipment(true, ThermostatView.Mode.HEATING)));
-        assertEquals(OptionalInt.of(palette.cooling()), palette.outline(equipment(true, ThermostatView.Mode.COOLING)));
-        assertEquals(OptionalInt.of(palette.stopped()), palette.outline(equipment(true, ThermostatView.Mode.IDLE)));
+        assertEquals(OptionalInt.of(palette.stopped()), palette.color(equipment(false, ThermostatView.Mode.IDLE)));
+        assertEquals(OptionalInt.of(palette.heating()), palette.color(equipment(true, ThermostatView.Mode.HEATING)));
+        assertEquals(OptionalInt.of(palette.cooling()), palette.color(equipment(true, ThermostatView.Mode.COOLING)));
+        assertEquals(OptionalInt.of(palette.stopped()), palette.color(equipment(true, ThermostatView.Mode.IDLE)));
     }
 
     @Test
@@ -110,5 +110,23 @@ class DebugModelTest {
         DebugSettings quick = DebugSettings.load(short_, warning -> fail(warning));
         assertEquals(30, quick.durationSeconds());
         assertEquals("none", quick.effect());
+    }
+
+    @Test
+    void aSignsFrameRingsItsBoard() {
+        // A wall sign facing north lies against the block to its south.
+        List<SignFrame.Point> frame = SignFrame.of(SignFrame.Mount.WALL, 0, -1);
+        assertEquals(2 * SignFrame.PER_SIDE + 2 * (SignFrame.PER_SIDE - 2), frame.size(), "corners counted once");
+        double z = 0.5 - (-0.375 + SignFrame.AHEAD);
+        for (SignFrame.Point point : frame) assertEquals(z, point.z(), 1e-9, "flat, just in front of the board");
+        double minX = frame.stream().mapToDouble(SignFrame.Point::x).min().orElseThrow();
+        double maxX = frame.stream().mapToDouble(SignFrame.Point::x).max().orElseThrow();
+        assertEquals(1.1, maxX - minX, 1e-9, "a little wider than the board");
+        double minY = frame.stream().mapToDouble(SignFrame.Point::y).min().orElseThrow();
+        double maxY = frame.stream().mapToDouble(SignFrame.Point::y).max().orElseThrow();
+        assertEquals(0.53, (minY + maxY) / 2, 1e-9, "centred on the board");
+        // Facing east, the frame lies along z instead.
+        List<SignFrame.Point> east = SignFrame.of(SignFrame.Mount.WALL, 1, 0);
+        for (SignFrame.Point point : east) assertEquals(0.5 + (-0.375 + SignFrame.AHEAD), point.x(), 1e-9);
     }
 }

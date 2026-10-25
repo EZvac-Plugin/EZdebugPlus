@@ -1,5 +1,5 @@
 # EZdebug+: a Debug Potion that shows EZvac at work. /ezdb debug gives one;
-# drinking it outlines every EZvac sign and piece of equipment near you, and
+# drinking it frames every EZvac sign and outlines the equipment near you, and
 # working vents and equipment puff a small cloud: cyan while cooling, orange
 # while heating. Only the player who drank it sees any of it. Milk ends it.
 
@@ -16,7 +16,7 @@ refresh-ticks: 10
 # screen. night_vision also helps in dark plant rooms; none shows nothing.
 effect: night_vision
 
-# Outline and cloud colours, as #RRGGBB.
+# Colours, as #RRGGBB: the frames around signs, equipment outlines, and clouds.
 colors:
   thermostat: "#55FFFF"
   # Thermometers, hygrometers and thermo-hygrometers.
