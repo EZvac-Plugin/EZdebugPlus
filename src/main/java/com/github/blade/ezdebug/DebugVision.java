@@ -2,10 +2,13 @@ package com.github.blade.ezdebug;
 
 import com.github.blade.ezdebug.model.Activity;
 import com.github.blade.ezdebug.model.DebugSettings;
+import com.github.blade.ezdebug.model.BoxFrame;
 import com.github.blade.ezdebug.model.Palette;
+import com.github.blade.ezdebug.model.Selection;
 import com.github.blade.ezdebug.model.SignFrame;
 import com.github.blade.hvac.api.EquipmentView;
 import com.github.blade.hvac.api.EzvacApi;
+import com.github.blade.hvac.api.EzvacLinkTool;
 import com.github.blade.hvac.api.HvacDevice;
 import com.github.blade.hvac.api.Position;
 import com.github.blade.hvac.api.ThermostatView;
@@ -25,6 +28,7 @@ import org.bukkit.block.data.type.HangingSign;
 import org.bukkit.block.data.type.WallHangingSign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -39,7 +43,10 @@ import java.util.UUID;
 /**
  * Who has debug vision, until when, and what they see: a coloured frame
  * around every EZvac sign near them, glowing outlines on equipment, and
- * clouds on vents and equipment at work. Main thread only.
+ * clouds on vents and equipment at work. A Debug Potion gives it for a
+ * while; holding EZvac's link tool gives it for as long as it is in hand,
+ * with the system the tool has selected drawn in its own colour. Main
+ * thread only.
  */
 final class DebugVision {
     private final EzDebugPlugin plugin;
@@ -122,14 +129,29 @@ final class DebugVision {
             }
             viewers.add(player);
         }
+        // The system each link-tool holder has selected; null when it has none (or a sensor hub).
+        Map<UUID, String> selecting = new HashMap<>();
+        if (plugin.toolVision()) {
+            EzvacLinkTool tool = plugin.ezvac().linkTool();
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
+                if (!player.hasPermission("ezdebug.use") && !player.hasPermission("ezvac.admin")) continue;
+                ItemStack held = player.getInventory().getItemInMainHand();
+                if (!tool.isLinkTool(held)) continue;
+                selecting.put(player.getUniqueId(),
+                        tool.selection(held).flatMap(EzvacLinkTool.LinkSelection::system).orElse(null));
+                if (!viewers.contains(player)) viewers.add(player);
+            }
+        }
         Map<Position, Outlines.Wanted> wanted = new HashMap<>();
         Map<World, List<Player>> byWorld = new HashMap<>();
         for (Player player : viewers) byWorld.computeIfAbsent(player.getWorld(), ignored -> new ArrayList<>()).add(player);
-        for (Map.Entry<World, List<Player>> entry : byWorld.entrySet()) draw(entry.getKey(), entry.getValue(), wanted);
+        for (Map.Entry<World, List<Player>> entry : byWorld.entrySet())
+            draw(entry.getKey(), entry.getValue(), selecting, wanted);
         outlines.show(wanted);
     }
 
-    private void draw(World world, List<Player> players, Map<Position, Outlines.Wanted> wanted) {
+    private void draw(World world, List<Player> players, Map<UUID, String> selecting,
+                      Map<Position, Outlines.Wanted> wanted) {
         EzvacApi ezvac = plugin.ezvac();
         DebugSettings settings = plugin.settings();
         Palette palette = settings.palette();
@@ -140,10 +162,23 @@ final class DebugVision {
             for (Player player : players) if (near(player, device.position(), radius)) near.add(player);
             if (near.isEmpty()) continue;
             OptionalInt color = palette.color(device);
+            // The players whose link tool has this device's system selected see it in the selected colour.
+            List<Player> linking = new ArrayList<>();
+            List<Player> others = new ArrayList<>();
+            for (Player player : near)
+                (Selection.in(device, selecting.get(player.getUniqueId())) ? linking : others).add(player);
             if (color.isPresent()) {
-                if (device instanceof EquipmentView)
+                if (device instanceof EquipmentView) {
+                    // One outline is shared by every viewer, so the selection is a box of specks on top.
                     wanted.put(device.position(), new Outlines.Wanted(color.getAsInt(), new HashSet<>(near)));
-                else frame(world, device.position(), color.getAsInt(), near);
+                    if (!linking.isEmpty()) box(device.position(), palette.selected(), linking);
+                } else {
+                    if (!others.isEmpty()) frame(world, device.position(), color.getAsInt(), others);
+                    if (!linking.isEmpty()) frame(world, device.position(), palette.selected(), linking);
+                }
+            } else if (device instanceof VentView) {
+                // Even an idle vent of the selected system is marked, so every linked vent can be found.
+                for (Player player : linking) marker(player, device.position(), palette.selected());
             }
             Optional<ThermostatView.Mode> working = switch (device) {
                 case VentView vent -> activity.vent(vent);
@@ -177,6 +212,21 @@ final class DebugVision {
             for (Player player : players)
                 player.spawnParticle(Particle.DUST, at.x() + point.x(), at.y() + point.y(), at.z() + point.z(), 1,
                         0.0, 0.0, 0.0, 0.0, dust);
+    }
+
+    /** A dotted box around a block, for these players' eyes only. */
+    private static void box(Position at, int rgb, List<Player> players) {
+        Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(rgb), 0.7f);
+        for (BoxFrame.Point point : BoxFrame.points())
+            for (Player player : players)
+                player.spawnParticle(Particle.DUST, at.x() + point.x(), at.y() + point.y(), at.z() + point.z(), 1,
+                        0.0, 0.0, 0.0, 0.0, dust);
+    }
+
+    /** One bright speck just above a block, for this player's eyes only. */
+    private static void marker(Player player, Position at, int rgb) {
+        player.spawnParticle(Particle.DUST, at.x() + 0.5, at.y() + 1.05, at.z() + 0.5, 2, 0.08, 0.0, 0.08, 0.0,
+                new Particle.DustOptions(Color.fromRGB(rgb), 1.4f));
     }
 
     /** A little coloured cloud on a block, for this player's eyes only. */

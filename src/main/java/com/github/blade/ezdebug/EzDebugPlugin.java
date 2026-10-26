@@ -9,8 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
 
 /**
- * EZdebug+: a Debug Potion that lets admins see EZvac at work. Built only on
- * EZvac's public API (1.2 or newer).
+ * EZdebug+: a Debug Potion that lets admins see EZvac at work, and the same
+ * vision while holding EZvac's link tool. Built only on EZvac's public API
+ * (1.2 or newer; the link tool needs 1.3).
  */
 public final class EzDebugPlugin extends JavaPlugin {
     private EzvacApi ezvac;
@@ -44,7 +45,8 @@ public final class EzDebugPlugin extends JavaPlugin {
         command.setTabCompleter(commands);
         for (Player player : getServer().getOnlinePlayers()) potion.resume(player);
         vision.start();
-        getLogger().info("EZdebug+ enabled on EZvac " + ezvac.pluginVersion() + " (API " + ezvac.apiVersion() + ").");
+        getLogger().info("EZdebug+ enabled on EZvac " + ezvac.pluginVersion() + " (API " + ezvac.apiVersion() + ")"
+                + (toolVision() ? "; holding the link tool shows debug vision." : "."));
     }
 
     @Override
@@ -60,6 +62,21 @@ public final class EzDebugPlugin extends JavaPlugin {
         } catch (NumberFormatException unknown) {
             return false;
         }
+    }
+
+    /** API 1.3 or newer, within major version 1: it has the link tool (EZvac 3.0). */
+    static boolean hasLinkTool(String apiVersion) {
+        String[] parts = apiVersion.split("\\.");
+        try {
+            return parts.length >= 2 && Integer.parseInt(parts[0]) == 1 && Integer.parseInt(parts[1]) >= 3;
+        } catch (NumberFormatException unknown) {
+            return false;
+        }
+    }
+
+    /** Whether holding the link tool shows debug vision: switched on, and an EZvac that has one. */
+    boolean toolVision() {
+        return settings.linkTool() && hasLinkTool(ezvac.apiVersion());
     }
 
     void loadSettings() {

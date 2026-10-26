@@ -12,12 +12,14 @@ import java.util.OptionalInt;
 /**
  * The colours debug vision draws in, as 0xRRGGBB. Every EZvac sign is
  * framed in its kind's colour; equipment is outlined by what it is doing;
- * clouds show cooling or heating. Pure.
+ * clouds show cooling or heating. The system selected on a link tool is
+ * drawn in {@code selected} for the player holding it. Pure.
  */
 public record Palette(int thermostat, int thermometer, int rpmMonitor, int settingsPanel, int sensorHub,
-                      int climateUnit, int stopped, int cooling, int heating) {
+                      int climateUnit, int stopped, int cooling, int heating, int selected) {
     public static Palette defaults() {
-        return new Palette(0x55FFFF, 0xFFFFFF, 0xFFFF55, 0xFF77FF, 0x55FF55, 0x5599FF, 0x8A8A8A, 0x55DDFF, 0xFF9933);
+        return new Palette(0x55FFFF, 0xFFFFFF, 0xFFFF55, 0xFF77FF, 0x55FF55, 0x5599FF, 0x8A8A8A, 0x55DDFF, 0xFF9933,
+                0xFF4444);
     }
 
     /** A device's colour: its sign's frame, or equipment's outline; empty for vents and sensor buttons. */

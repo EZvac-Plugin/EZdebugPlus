@@ -16,6 +16,12 @@ refresh-ticks: 10
 # screen. night_vision also helps in dark plant rooms; none shows nothing.
 effect: night_vision
 
+# Holding EZvac's link tool (EZvac 3.0 or newer) shows debug vision too, with
+# no potion, for as long as it is in your hand. The system the tool has
+# selected is drawn in the "selected" colour, so you see what you're linking
+# to. Needs ezdebug.use or ezvac.admin.
+link-tool: true
+
 # Colours, as #RRGGBB: the frames around signs, equipment outlines, and clouds.
 colors:
   thermostat: "#55FFFF"
@@ -31,3 +37,5 @@ colors:
   # Equipment running, and clouds, while cooling or heating.
   cooling: "#55DDFF"
   heating: "#FF9933"
+  # The system selected on the link tool: its signs, equipment and vents.
+  selected: "#FF4444"

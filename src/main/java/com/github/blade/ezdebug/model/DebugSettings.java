@@ -16,8 +16,10 @@ import java.util.function.Supplier;
  * @param refreshTicks    how often outlines and clouds are redrawn
  * @param effect          the vanilla effect that shows the countdown (a key such as night_vision), or "none"
  * @param palette         the colours
+ * @param linkTool        whether holding EZvac's link tool gives debug vision (EZvac 3.0, API 1.3)
  */
-public record DebugSettings(int durationSeconds, double radius, long refreshTicks, String effect, Palette palette) {
+public record DebugSettings(int durationSeconds, double radius, long refreshTicks, String effect, Palette palette,
+                            boolean linkTool) {
     public DebugSettings {
         if (durationSeconds < 1) throw new IllegalArgumentException("duration-minutes must be above 0");
         if (!(radius >= 4 && radius <= 128)) throw new IllegalArgumentException("radius must be 4 to 128 blocks");
@@ -38,12 +40,13 @@ public record DebugSettings(int durationSeconds, double radius, long refreshTick
                 color(config, "colors.rpm-monitor", p.rpmMonitor()), color(config, "colors.settings-panel", p.settingsPanel()),
                 color(config, "colors.sensor-hub", p.sensorHub()), color(config, "colors.climate-unit", p.climateUnit()),
                 color(config, "colors.stopped", p.stopped()), color(config, "colors.cooling", p.cooling()),
-                color(config, "colors.heating", p.heating())), () -> p);
+                color(config, "colors.heating", p.heating()), color(config, "colors.selected", p.selected())), () -> p);
+        boolean linkTool = config.getBoolean("link-tool", true);
         return part("debug", warn, () -> new DebugSettings(
                 (int) Math.round(config.getDouble("duration-minutes", 8.0) * 60.0),
                 config.getDouble("radius", 32.0), config.getLong("refresh-ticks", 10L),
-                config.getString("effect", "night_vision"), palette),
-                () -> new DebugSettings(480, 32.0, 10L, "night_vision", palette));
+                config.getString("effect", "night_vision"), palette, linkTool),
+                () -> new DebugSettings(480, 32.0, 10L, "night_vision", palette, linkTool));
     }
 
     /** {@code "#RRGGBB"} as 0xRRGGBB. */
