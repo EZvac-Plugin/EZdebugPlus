@@ -22,19 +22,26 @@ public record Palette(int thermostat, int thermometer, int rpmMonitor, int setti
                 0xFF4444);
     }
 
-    /** A device's colour: its sign's frame, or equipment's outline; empty for vents and sensor buttons. */
+    /**
+     * A device's colour: its sign's frame, or equipment's outline; empty for
+     * vents and sensor buttons. Air purifiers (EZvac 3.2) are climate units.
+     * Any instrument kind this build doesn't know, such as 3.2's air monitor,
+     * is a sign read like a thermometer, or a button when the API says it is
+     * a sensor: a switch with no default throws on a kind added after it was
+     * built.
+     */
     public OptionalInt color(HvacDevice device) {
         return switch (device) {
             case ThermostatView ignored -> OptionalInt.of(thermostat);
             case EquipmentView equipment -> OptionalInt.of(equipment.running() ? activity(equipment.mode()) : stopped);
             case ClimateUnitView ignored -> OptionalInt.of(climateUnit);
             case VentView ignored -> OptionalInt.empty();
-            case InstrumentView instrument -> switch (instrument.kind()) {
-                case THERMOMETER, HYGROMETER, THERMO_HYGROMETER -> OptionalInt.of(thermometer);
+            case InstrumentView instrument -> instrument.kind().sensor() ? OptionalInt.empty()
+                    : switch (instrument.kind()) {
                 case RPM_MONITOR -> OptionalInt.of(rpmMonitor);
                 case SETTINGS_PANEL -> OptionalInt.of(settingsPanel);
                 case SENSOR_HUB -> OptionalInt.of(sensorHub);
-                case TEMPERATURE_SENSOR, HUMIDITY_SENSOR, TEMPERATURE_HUMIDITY_SENSOR, WEATHER_SENSOR -> OptionalInt.empty();
+                default -> OptionalInt.of(thermometer);
             };
         };
     }

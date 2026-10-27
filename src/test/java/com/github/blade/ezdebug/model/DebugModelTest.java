@@ -51,6 +51,7 @@ class DebugModelTest {
                 ClimateUnitView.Kind.DEHUMIDIFIER, AT, 50, 40, true, ClimateUnitView.State.IDLE, 0)));
         for (InstrumentView.Kind kind : InstrumentView.Kind.values())
             if (kind.sensor()) assertEquals(OptionalInt.empty(), palette.color(instrument(kind)), kind + " is a button");
+            else assertTrue(palette.color(instrument(kind)).isPresent(), kind + " is a sign: every one is framed");
         assertEquals(OptionalInt.empty(), palette.color(new VentView("house", AT, VentView.Medium.AIR)));
     }
 
