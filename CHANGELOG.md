@@ -2,6 +2,23 @@
 
 All notable changes to EZdebug+ are recorded here.
 
+## 0.2.1
+
+Ready for EZvac ALPHA 3.2's air quality and wind. Still runs on EZvac ALPHA
+2.2 and newer.
+
+### Fixed
+
+- **Debug vision stopped working near EZvac 3.2's new devices.** An air
+  monitor sign, a cherry-button air sensor or a lightning-rod wind sensor
+  made it throw an error every tick. Now:
+  - air monitors are framed like thermometers;
+  - air and wind sensors, like every sensor, get no frame;
+  - air purifiers are framed like dehumidifiers and humidifiers.
+
+  Any kind of device a later EZvac adds is drawn the same way instead of
+  breaking vision.
+
 ## 0.2.0
 
 Debug vision while linking, for EZvac ALPHA 3.0's link tool. Still runs on
