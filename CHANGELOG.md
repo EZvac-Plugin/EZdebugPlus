@@ -10,7 +10,7 @@ Ready for EZvac ALPHA 3.2's air quality and wind. Still runs on EZvac ALPHA
 ### Fixed
 
 - **Debug vision stopped working near EZvac 3.2's new devices.** An air
-  monitor sign, a cherry-button air sensor or a lightning-rod wind sensor
+  monitor sign, a cherry-button air sensor or a bamboo-button wind sensor
   made it throw an error every tick. Now:
   - air monitors are framed like thermometers;
   - air and wind sensors, like every sensor, get no frame;
