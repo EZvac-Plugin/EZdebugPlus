@@ -42,8 +42,16 @@ final class Outlines {
         }
     }
 
-    /** What one refresh wants outlined: a colour, and who sees it. */
-    record Wanted(int color, Set<Player> viewers) {}
+    /**
+     * What one refresh wants outlined: a colour, who sees it, and what is
+     * drawn: a copy of the block there (null), or this block (a leak's red
+     * glass), at this scale.
+     */
+    record Wanted(int color, Set<Player> viewers, org.bukkit.block.data.BlockData shown, float scale) {
+        Wanted(int color, Set<Player> viewers) {
+            this(color, viewers, null, SCALE);
+        }
+    }
 
     private final Plugin plugin;
     private final Map<Position, Outline> outlines = new HashMap<>();
@@ -64,7 +72,7 @@ final class Outlines {
         for (Map.Entry<Position, Wanted> entry : wanted.entrySet()) {
             Outline outline = outlines.get(entry.getKey());
             if (outline == null) {
-                BlockDisplay display = spawn(entry.getKey(), entry.getValue().color());
+                BlockDisplay display = spawn(entry.getKey(), entry.getValue());
                 if (display == null) continue;
                 outline = new Outline(display, entry.getValue().color());
                 outlines.put(entry.getKey(), outline);
@@ -91,22 +99,28 @@ final class Outlines {
         }
     }
 
-    /** A copy of the block at this spot, a hair larger, glowing; null when its world or chunk isn't loaded. */
-    private BlockDisplay spawn(Position at, int color) {
+    /**
+     * A copy of the block at this spot, a hair larger, glowing, or the block
+     * asked for; null when its world or chunk isn't loaded.
+     */
+    private BlockDisplay spawn(Position at, Wanted wanted) {
+        int color = wanted.color();
         World world = plugin.getServer().getWorld(at.world());
         if (world == null || !world.isChunkLoaded(at.x() >> 4, at.z() >> 4)) return null;
         Block block = world.getBlockAt(at.x(), at.y(), at.z());
-        if (block.getType().isAir()) return null;
-        float shift = (1f - SCALE) / 2f;
+        if (wanted.shown() == null && block.getType().isAir()) return null;
+        org.bukkit.block.data.BlockData shown = wanted.shown() != null ? wanted.shown() : block.getBlockData();
+        float scale = wanted.scale();
+        float shift = (1f - scale) / 2f;
         return world.spawn(new Location(world, at.x(), at.y(), at.z()), BlockDisplay.class, display -> {
             display.setPersistent(false);
             display.setVisibleByDefault(false);
-            display.setBlock(block.getBlockData());
+            display.setBlock(shown);
             display.setGlowing(true);
             display.setGlowColorOverride(Color.fromRGB(color));
             display.setBrightness(new Display.Brightness(15, 15));
             display.setTransformation(new Transformation(new Vector3f(shift, shift, shift), new AxisAngle4f(),
-                    new Vector3f(SCALE, SCALE, SCALE), new AxisAngle4f()));
+                    new Vector3f(scale, scale, scale), new AxisAngle4f()));
         });
     }
 

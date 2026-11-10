@@ -10,8 +10,14 @@ the realistic HVAC and indoor-climate plugin for Paper and Purpur.
 - **every piece of equipment glows** with an outline you can see through
   walls, so equipment hidden in a casing is easy to find: grey while it's
   stopped, cyan while it cools, orange while it heats;
-- **working vents puff a little cloud,** cyan or orange, while their system
-  cools or heats, and so does running equipment.
+- **working vents puff a cloud,** cyan or orange, with a column rising out of
+  it, while their system cools or heats, and so does running equipment;
+- **every room's edge is dotted in, and the openings it leaks through glow
+  red** through walls (doorways, windows, holes), on EZvac BETA 1.0 Pilot 5
+  and newer;
+- **weather stations' areas** are outlined, and **dotted lines** join each
+  sensor hub to its sensors, each RPM monitor to its equipment and each
+  settings panel to its thermostat.
 
 Only you see any of it: other players see nothing. Night Vision shows the
 countdown and helps in dark plant rooms. **Milk** ends it, like any potion,
@@ -25,7 +31,13 @@ The system the tool has selected stands out in red:
 - its vents get a red marker, even when idle.
 
 So you see exactly what you're linking to, and what belongs to the house
-next door.
+next door. On EZvac BETA 1.0 Pilot 5 and newer, its room's edge and leaks
+show too.
+
+> **EZvac BETA 1.0 Pilot 5 has a built-in EZdebug** that shows the system
+> you're linking, with its room and leaks. EZdebug+ adds the Debug Potion
+> (every system at once), stations' areas and the links. With EZdebug+
+> installed, the built-in one steps aside.
 
 > **Requires** EZvac ALPHA 2.2 or newer (EZvac API 1.2), on Paper or Purpur
 > 1.21.1 with Java 21. Link-tool vision needs EZvac ALPHA 3.0 (API 1.3).

@@ -2,6 +2,34 @@
 
 All notable changes to EZdebug+ are recorded here.
 
+## 0.4.0
+
+Rooms and their leaks, weather stations' areas, and the links between
+devices. Rooms need EZvac BETA 1.0 Pilot 5 (API 1.10); everything else still
+runs on EZvac ALPHA 2.2 and newer.
+
+### Added
+
+- **Rooms as EZvac sees them,** for every system near you with the Debug
+  Potion, or the one you're linking with the link tool: the edge of the
+  space its air fills, dotted in, and **the openings it leaks through**
+  (doorways, windows, holes) **glowing red, through walls**.
+- **Weather stations' areas:** a dotted square round the area each station
+  measures and forecasts for, at its height.
+- **Links you can't otherwise see:** dotted lines from a sensor hub to its
+  sensors, from an RPM monitor to its equipment, and from a settings panel to
+  its system's thermostat.
+- **A mini thermostat** on a wall button gets a box round it, as its
+  button has no sign to frame.
+
+### Changed
+
+- **Vents and equipment at work are easier to see:** a bigger puff, with a
+  column rising out of it.
+- **EZvac BETA 1.0 Pilot 5 has a built-in EZdebug** (link-tool vision and
+  the selected room's leaks). With EZdebug+ installed and switched on, it
+  stands down and EZdebug+ shows everything.
+
 ## 0.3.0
 
 Switched from EZvac's Addons menu. Still runs on EZvac ALPHA 2.2 and newer.

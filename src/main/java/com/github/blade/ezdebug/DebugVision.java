@@ -3,6 +3,7 @@ package com.github.blade.ezdebug;
 import com.github.blade.ezdebug.model.Activity;
 import com.github.blade.ezdebug.model.DebugSettings;
 import com.github.blade.ezdebug.model.BoxFrame;
+import com.github.blade.ezdebug.model.Dots;
 import com.github.blade.ezdebug.model.Palette;
 import com.github.blade.ezdebug.model.Selection;
 import com.github.blade.ezdebug.model.SignFrame;
@@ -145,9 +146,68 @@ final class DebugVision {
         Map<Position, Outlines.Wanted> wanted = new HashMap<>();
         Map<World, List<Player>> byWorld = new HashMap<>();
         for (Player player : viewers) byWorld.computeIfAbsent(player.getWorld(), ignored -> new ArrayList<>()).add(player);
-        for (Map.Entry<World, List<Player>> entry : byWorld.entrySet())
+        for (Map.Entry<World, List<Player>> entry : byWorld.entrySet()) {
             draw(entry.getKey(), entry.getValue(), selecting, wanted);
+            stations(entry.getKey(), entry.getValue());
+        }
         outlines.show(wanted);
+    }
+
+    /** A weather station's area, drawn in this colour. */
+    private static final int STATION = 0x7FB2FF;
+
+    /**
+     * Rooms as EZvac sees them (EZvac API 1.10): the systems each viewer
+     * sees, every one near a potion drinker or only the one a link-tool
+     * holder has selected, have their edges dotted in and their leaks
+     * outlined in glowing red.
+     */
+    private void rooms(World world, Map<Player, java.util.Collection<String>> seen,
+                       Map<Position, Outlines.Wanted> wanted) {
+        if (seen.isEmpty() || !Spaces.offered(plugin.ezvac().apiVersion())) return;
+        Map<Position, List<Player>> leaks = Spaces.draw(plugin.ezvac(), world, seen, tick);
+        int color = plugin.settings().palette().selected();
+        // A leak is shown as glowing red glass filling the opening.
+        org.bukkit.block.data.BlockData glass = org.bukkit.Material.RED_STAINED_GLASS.createBlockData();
+        for (Map.Entry<Position, List<Player>> leak : leaks.entrySet())
+            wanted.putIfAbsent(leak.getKey(), new Outlines.Wanted(color, new HashSet<>(leak.getValue()), glass, 0.96f));
+    }
+
+    /** Each weather station's area (EZvac API 1.7), a dotted square at its height, near the viewer only. */
+    private void stations(World world, List<Player> players) {
+        if (!atLeast(plugin.ezvac().apiVersion(), 7)) return;
+        Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(STATION), 1.0f);
+        for (var station : plugin.ezvac().weatherStations(world)) {
+            Position at = station.position();
+            for (Player player : players) {
+                double radius = plugin.settings().radius();
+                double dx = player.getLocation().getX() - (at.x() + 0.5), dz = player.getLocation().getZ() - (at.z() + 0.5);
+                double reach = station.areaRadius() + radius;
+                if (dx * dx + dz * dz > reach * reach) continue;
+                for (Dots.Point point : Dots.square(at.x() + 0.5, at.z() + 0.5, at.y() + 0.5, station.areaRadius(),
+                        player.getLocation().getX(), player.getLocation().getZ(), radius))
+                    player.spawnParticle(Particle.DUST, point.x(), point.y(), point.z(), 1, 0.0, 0.0, 0.0, 0.0, dust);
+            }
+        }
+    }
+
+    /** A dotted line between two devices, in a colour, for these players. */
+    private static void link(Position from, Position to, int rgb, List<Player> players) {
+        Particle.DustOptions dust = new Particle.DustOptions(Color.fromRGB(rgb), 0.5f);
+        for (Dots.Point point : Dots.line(from.x() + 0.5, from.y() + 0.5, from.z() + 0.5, to.x() + 0.5, to.y() + 0.5,
+                to.z() + 0.5))
+            for (Player player : players)
+                player.spawnParticle(Particle.DUST, point.x(), point.y(), point.z(), 1, 0.0, 0.0, 0.0, 0.0, dust);
+    }
+
+    /** API 1.{minor} or newer, within major version 1. */
+    static boolean atLeast(String apiVersion, int minor) {
+        String[] parts = apiVersion.split("\\.");
+        try {
+            return parts.length >= 2 && Integer.parseInt(parts[0]) == 1 && Integer.parseInt(parts[1]) >= minor;
+        } catch (NumberFormatException unknown) {
+            return false;
+        }
     }
 
     private void draw(World world, List<Player> players, Map<UUID, String> selecting,
@@ -157,10 +217,30 @@ final class DebugVision {
         Palette palette = settings.palette();
         double radius = settings.radius();
         Activity activity = new Activity(ezvac.thermostats(world));
+        // The systems each viewer sees the room of: every one near a potion drinker, the selection while linking.
+        Map<Player, java.util.Collection<String>> rooms = new HashMap<>();
+        for (Player player : players) {
+            String chosen = selecting.get(player.getUniqueId());
+            if (active(player)) rooms.put(player, new HashSet<>());
+            else if (chosen != null) rooms.put(player, new HashSet<>(List.of(chosen)));
+        }
+        boolean links = atLeast(ezvac.apiVersion(), 3);
         for (HvacDevice device : ezvac.devices(world)) {
             List<Player> near = new ArrayList<>();
             for (Player player : players) if (near(player, device.position(), radius)) near.add(player);
             if (near.isEmpty()) continue;
+            Optional<String> system = Selection.systemOf(device);
+            if (system.isPresent())
+                for (Player player : near) if (active(player)) rooms.get(player).add(system.get());
+            // The links nothing else shows: a hub to its sensors, an RPM monitor to its equipment, a panel to its thermostat.
+            if (links && device instanceof com.github.blade.hvac.api.InstrumentView instrument) {
+                OptionalInt tint = palette.color(device);
+                int rgb = tint.isPresent() ? tint.getAsInt() : palette.sensorHub();
+                for (Position linked : instrument.links()) link(device.position(), linked, rgb, near);
+                if (instrument.kind() == com.github.blade.hvac.api.InstrumentView.Kind.SETTINGS_PANEL && instrument.system().isPresent())
+                    ezvac.thermostatOf(world, instrument.system().get())
+                            .ifPresent(thermostat -> link(device.position(), thermostat.position(), rgb, near));
+            }
             OptionalInt color = palette.color(device);
             // The players whose link tool has this device's system selected see it in the selected colour.
             List<Player> linking = new ArrayList<>();
@@ -187,6 +267,7 @@ final class DebugVision {
             };
             if (working.isPresent()) for (Player player : near) cloud(player, device.position(), palette.activity(working.get()));
         }
+        rooms(world, rooms, wanted);
     }
 
     private static boolean near(Player player, Position at, double radius) {
@@ -196,11 +277,18 @@ final class DebugVision {
         return dx * dx + dy * dy + dz * dz <= radius * radius;
     }
 
-    /** A dotted frame around a sign's board, in its kind's colour, for these players' eyes only. */
+    /**
+     * A dotted frame around a sign's board, in its kind's colour, for these
+     * players' eyes only; a device on something else (a mini thermostat's
+     * wall button) gets a box round its block.
+     */
     private static void frame(World world, Position at, int rgb, List<Player> players) {
         if (!world.isChunkLoaded(at.x() >> 4, at.z() >> 4)) return;
         Block block = world.getBlockAt(at.x(), at.y(), at.z());
-        if (!Tag.ALL_SIGNS.isTagged(block.getType())) return;
+        if (!Tag.ALL_SIGNS.isTagged(block.getType())) {
+            if (!block.getType().isAir()) box(at, rgb, players);
+            return;
+        }
         BlockData sign = block.getBlockData();
         SignFrame.Mount mount = sign instanceof WallSign ? SignFrame.Mount.WALL
                 : sign instanceof WallHangingSign || sign instanceof HangingSign ? SignFrame.Mount.HANGING
@@ -229,9 +317,16 @@ final class DebugVision {
                 new Particle.DustOptions(Color.fromRGB(rgb), 1.4f));
     }
 
-    /** A little coloured cloud on a block, for this player's eyes only. */
+    /**
+     * A coloured cloud on a block and a short column rising out of it, easy
+     * to see (0.4.0), for this player's eyes only.
+     */
     private static void cloud(Player player, Position at, int rgb) {
-        player.spawnParticle(Particle.DUST, at.x() + 0.5, at.y() + 0.6, at.z() + 0.5, 6, 0.25, 0.2, 0.25, 0.0,
-                new Particle.DustOptions(Color.fromRGB(rgb), 1.2f));
+        player.spawnParticle(Particle.DUST, at.x() + 0.5, at.y() + 0.7, at.z() + 0.5, 10, 0.3, 0.25, 0.3, 0.0,
+                new Particle.DustOptions(Color.fromRGB(rgb), 1.8f));
+        Particle.DustOptions column = new Particle.DustOptions(Color.fromRGB(rgb), 1.2f);
+        for (int i = 1; i <= 4; i++)
+            player.spawnParticle(Particle.DUST, at.x() + 0.5, at.y() + 0.8 + i * 0.35, at.z() + 0.5, 2, 0.08, 0.05,
+                    0.08, 0.0, column);
     }
 }
