@@ -80,6 +80,11 @@ final class DebugPotion implements Listener {
             return;
         }
         if (!isPotion(event.getItem())) return;
+        if (!plugin.active()) {
+            player.sendMessage(Component.text("EZdebug+ is switched off on this server (/hvac addons), so the potion"
+                    + " shows nothing.", NamedTextColor.YELLOW));
+            return;
+        }
         long ticks = plugin.settings().durationTicks();
         plugin.vision().begin(player, ticks);
         PotionEffectType carrier = carrier();

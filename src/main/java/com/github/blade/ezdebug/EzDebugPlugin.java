@@ -44,7 +44,10 @@ public final class EzDebugPlugin extends JavaPlugin {
         command.setExecutor(commands);
         command.setTabCompleter(commands);
         for (Player player : getServer().getOnlinePlayers()) potion.resume(player);
-        vision.start();
+        // EZvac's Addons menu (API 1.9) switches EZdebug+ while the server runs; older EZvacs have none.
+        if (MenuSwitch.offered(ezvac.apiVersion())) active = MenuSwitch.register(ezvac, this, this::setActive);
+        if (active) vision.start();
+        else getLogger().info("EZdebug+ is switched off in EZvac's Addons menu (/hvac addons).");
         getLogger().info("EZdebug+ enabled on EZvac " + ezvac.pluginVersion() + " (API " + ezvac.apiVersion() + ")"
                 + (toolVision() ? "; holding the link tool shows debug vision." : "."));
     }
@@ -52,6 +55,18 @@ public final class EzDebugPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (vision != null) vision.shutdown();
+    }
+
+    private boolean active = true;
+
+    /** Whether EZdebug+ is switched on in EZvac's Addons menu (always, on an EZvac without one). */
+    boolean active() { return active; }
+
+    private void setActive(boolean on) {
+        active = on;
+        if (on) vision.start();
+        else vision.shutdown();
+        getLogger().info("EZdebug+ was switched " + (on ? "on" : "off") + " in EZvac's Addons menu.");
     }
 
     /** API 1.2 or newer, within major version 1. */

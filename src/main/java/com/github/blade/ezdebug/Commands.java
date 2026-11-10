@@ -47,7 +47,7 @@ final class Commands implements CommandExecutor, TabCompleter {
             }
             case "reload" -> {
                 plugin.loadSettings();
-                plugin.vision().start();
+                if (plugin.active()) plugin.vision().start();
                 sender.sendMessage(Component.text("EZdebug+ settings reloaded.", NamedTextColor.GREEN));
             }
             default -> sender.sendMessage(Component.text("Usage: /ezdb <debug|off> [player] | /ezdb reload",
