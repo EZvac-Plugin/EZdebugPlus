@@ -2,6 +2,18 @@
 
 All notable changes to EZdebug+ are recorded here.
 
+## 0.3.0
+
+Switched from EZvac's Addons menu. Still runs on EZvac ALPHA 2.2 and newer.
+
+### Added
+
+- **`/hvac addons` switches EZdebug+ on and off while the server runs**
+  (EZvac BETA 1.0 Pilot 4 and newer, API 1.9). Switched off, debug vision
+  stops for everyone and a Debug Potion shows nothing; the choice is kept
+  through restarts. On an older EZvac, which has no Addons menu, it runs as
+  before.
+
 ## 0.2.1
 
 Ready for EZvac ALPHA 3.2's air quality and wind. Still runs on EZvac ALPHA
