@@ -1,8 +1,58 @@
-# EZdebug+
-<img width="2560" height="2560" alt="EZDB" src="https://github.com/user-attachments/assets/fbb01ccb-a442-4cb4-afaf-bdb9b2eb9b3b" />
+<div align="center">
 
-**See EZvac at work.** An addon for [EZvac](https://github.com/EZvac-Plugin/EZvac),
-the realistic HVAC and indoor-climate plugin for Paper and Purpur.
+<img width="220" alt="EZdebug+" src="https://github.com/user-attachments/assets/fbb01ccb-a442-4cb4-afaf-bdb9b2eb9b3b" />
+
+# EZdebug+
+
+**See EZvac at work.**<br>
+An official addon for [EZvac](https://github.com/EZvac-Plugin/EZvac), real heating, cooling and indoor climate for Paper and Purpur.
+
+[![Release](https://img.shields.io/github/v/release/EZvac-Plugin/EZdebugPlus?label=release&color=0e7c86&logo=github&style=for-the-badge&labelColor=1f2328)](https://github.com/EZvac-Plugin/EZdebugPlus/releases)
+[![Needs EZvac](https://img.shields.io/badge/needs%20EZvac-ALPHA%202.2%2B-0e7c86?style=for-the-badge&labelColor=1f2328&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOCAxYzIuNCAyLjggNC42IDUuNSA0LjYgOC4yYTQuNiA0LjYgMCAwIDEtOS4yIDBDMy40IDYuNSA1LjYgMy44IDggMXptMCA2LjZhMS43IDEuNyAwIDEgMCAwIDMuNCAxLjcgMS43IDAgMCAwIDAtMy40eiIvPjwvc3ZnPg==)](https://github.com/EZvac-Plugin/EZvac)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%2B-0e7c86?style=for-the-badge&labelColor=1f2328&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgc2hhcGUtcmVuZGVyaW5nPSJjcmlzcEVkZ2VzIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IiM4YTVhM2IiLz48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iNSIgZmlsbD0iIzZhYWEzYSIvPjxyZWN0IHg9IjIiIHk9IjUiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiM2YWFhM2EiLz48cmVjdCB4PSI3IiB5PSI1IiB3aWR0aD0iMiIgaGVpZ2h0PSIzIiBmaWxsPSIjNmFhYTNhIi8+PHJlY3QgeD0iMTIiIHk9IjUiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiM2YWFhM2EiLz48cmVjdCB4PSI0IiB5PSIxMCIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzZiNDMyOSIvPjxyZWN0IHg9IjEwIiB5PSIxMiIgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0iIzZiNDMyOSIvPjxyZWN0IHg9IjEyIiB5PSI4IiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjYTc3NzRmIi8+PHJlY3QgeD0iMiIgeT0iMTMiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNhNzc3NGYiLz48L3N2Zz4=)](#in-detail)
+[![License](https://img.shields.io/github/license/EZvac-Plugin/EZdebugPlus?color=0e7c86&logo=opensourceinitiative&style=for-the-badge&labelColor=1f2328)](LICENSE)
+
+[![Download](https://img.shields.io/badge/Download-f69500?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTcgMWgydjdsMi41LTIuNSAxLjQgMS40TDggMTEuOCAzLjEgNi45bDEuNC0xLjRMNyA4eiIvPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0yIDEyaDJ2MS41aDhWMTJoMnYzLjVIMnoiLz48L3N2Zz4=)](https://github.com/EZvac-Plugin/EZdebugPlus/releases/latest)
+[![EZvac](https://img.shields.io/badge/EZvac-f69500?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOCAxYzIuNCAyLjggNC42IDUuNSA0LjYgOC4yYTQuNiA0LjYgMCAwIDEtOS4yIDBDMy40IDYuNSA1LjYgMy44IDggMXptMCA2LjZhMS43IDEuNyAwIDEgMCAwIDMuNCAxLjcgMS43IDAgMCAwIDAtMy40eiIvPjwvc3ZnPg==)](https://github.com/EZvac-Plugin/EZvac)
+[![Website](https://img.shields.io/badge/EZvac%20website-f69500?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOCAxYTcgNyAwIDEgMCAwIDE0QTcgNyAwIDAgMCA4IDF6bS0uOCAxLjZDNi40IDMuNyA1LjkgNS4zIDUuOCA3LjJIMy4xYTUgNSAwIDAgMSA0LjEtNC42em0xLjYgMGE1IDUgMCAwIDEgNC4xIDQuNmgtMi43Yy0uMS0xLjktLjYtMy41LTEuNC00LjZ6TTcuMiA3LjJINy4zYy4xLTEuNi41LTMgLjctMy42LjIuNi42IDIgLjcgMy42ek0zLjEgOC44aDIuN2MuMSAxLjkuNiAzLjUgMS40IDQuNmE1IDUgMCAwIDEtNC4xLTQuNnptNC4yIDBoMS40Yy0uMSAxLjYtLjUgMy0uNyAzLjYtLjItLjYtLjYtMi0uNy0zLjZ6bTMuNiAwaDIuN2E1IDUgMCAwIDEtNC4xIDQuNmMuOC0xLjEgMS4zLTIuNyAxLjQtNC42eiIvPjwvc3ZnPg==)](https://ezvac-plugin.github.io/EZvac/)
+
+</div>
+
+## Features
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**🧪 A Debug Potion**<br>
+Drink it and, for 8 minutes, every EZvac system around you shows itself. Only you see it.
+
+</td>
+<td width="50%" valign="top">
+
+**🔆 Equipment that glows**<br>
+Through walls: grey while stopped, cyan while cooling, orange while heating.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+**💨 Rooms, vents and leaks**<br>
+Working vents puff colour, every room's edge is dotted in, and its leaks glow red.
+
+</td>
+<td valign="top">
+
+**🔗 Links and areas**<br>
+Dotted lines join hubs, monitors and panels to what they serve; stations' areas are outlined.
+
+</td>
+</tr>
+</table>
+
+
+## In detail
 
 `/ezdb debug` gives you a **Debug Potion**. Drink it, and for 8 minutes:
 - **every EZvac sign gets a coloured frame:** a ring of specks around its
@@ -82,7 +132,10 @@ vision needs `ezdebug.use` or EZvac's `ezvac.admin`.
 
 A bad value warns in the console and that part uses its defaults.
 
-## How it works
+<details>
+<summary><b>How it works</b></summary>
+
+<br>
 
 EZdebug+ is built only on EZvac's public API: `devices(world)` lists every
 device with its position, the equipment and thermostat views say what's
@@ -93,13 +146,20 @@ are block displays that only debug players are shown; they're never saved
 with the world. Frames and clouds are particles sent to debug players only.
 See [EZvac's API guide](https://github.com/EZvac-Plugin/EZvac/blob/main/docs/api.md).
 
-## Building
+</details>
+
+<details>
+<summary><b>Building</b></summary>
+
+<br>
 
 ```shell
 mvn clean package
 ```
 
 The jar is written to `target/EZdebugPlus-<version>.jar`.
+
+</details>
 
 ## License
 
